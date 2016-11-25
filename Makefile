@@ -31,4 +31,4 @@ RemoteBufConfig.class: RemoteBufConfig.java
 	javac -cp $(JAVACPPJAR) RemoteBufConfig.java
 
 clean:
-	rm -rf *.o *.so *.class linux-x86_64 test RemoteBuf.java
+	rm -rf *.o *.so *.class linux-x86_64 test
