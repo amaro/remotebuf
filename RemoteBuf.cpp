@@ -67,7 +67,7 @@ BufferManager::~BufferManager() {
 }
 
 Buffer *BufferManager::CreateBuffer(const std::string id) {
-  if (Buffers.count(id) == 1)
+  if (BufferExists(id))
     throw std::runtime_error("Buffer already exists");
 
   Buffer *B = new Buffer();
@@ -76,10 +76,18 @@ Buffer *BufferManager::CreateBuffer(const std::string id) {
 }
 
 Buffer *BufferManager::GetBuffer(const std::string id) {
-  if (Buffers.count(id) == 0)
+  if (!BufferExists(id))
     throw std::runtime_error("Buffer doesn't exist");
 
   return Buffers[id];
+}
+
+void BufferManager::DeleteBuffer(const std::string id) {
+  if (!BufferExists(id))
+    throw std::runtime_error("Buffer doesn't exist");
+
+  delete Buffers[id];
+  Buffers.erase(id);
 }
 
 bool BufferManager::BufferExists(const std::string id) {

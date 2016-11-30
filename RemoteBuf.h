@@ -12,24 +12,16 @@ class Buffer {
     Buffer();
     ~Buffer();
 
-    /*
-    Writes buf with size s to LocalBuf
-    */
+    /* Writes buf with size s to LocalBuf */
     void Write(char *buf, unsigned int s);
 
-    /*
-    Called after writing is done
-    */
+    /* Called after writing is done */
     void WriteDone();
 
-    /*
-    Copy LocalBuf to buf
-    */
+    /* Copy LocalBuf to buf */
     void Read(char *buf);
 
-    /*
-    Get the size of the buffer, regardless of where it is located.
-    */
+    /* Get the size of the buffer, regardless of where it is located. */
     unsigned int GetSize();
   private:
     std::vector<char> LocalBuf;
@@ -47,8 +39,22 @@ class BufferManager {
     BufferManager();
     ~BufferManager();
 
+    /* Creates buffer with specified id.
+     * Throws an exception if the buffer already exists
+     */
     Buffer *CreateBuffer(const std::string id);
+
+    /* Gets the buffer with specified id.
+     * Throws an exception if the buffer doesn't exist
+     */
     Buffer *GetBuffer(const std::string id);
+
+    /* If the buffer exists, it is deleted.
+     * If it doesn't, an exception is thrown.
+     */
+    void DeleteBuffer(const std::string id);
+
+    /* Returns true if the buffer with specified id exists. */
     bool BufferExists(const std::string id);
   private:
     std::unordered_map<std::string, Buffer *> Buffers;

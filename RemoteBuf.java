@@ -30,28 +30,20 @@ public class RemoteBuf extends RemoteBufConfig {
     public Buffer() { super((Pointer)null); allocate(); }
     private native void allocate();
 
-    /*
-    Writes buf with size s to LocalBuf
-    */
+    /* Writes buf with size s to LocalBuf */
     public native void Write(@Cast("char*") BytePointer buf, @Cast("unsigned int") int s);
     public native void Write(@Cast("char*") ByteBuffer buf, @Cast("unsigned int") int s);
     public native void Write(@Cast("char*") byte[] buf, @Cast("unsigned int") int s);
 
-    /*
-    Called after writing is done
-    */
+    /* Called after writing is done */
     public native void WriteDone();
 
-    /*
-    Copy LocalBuf to buf
-    */
+    /* Copy LocalBuf to buf */
     public native void Read(@Cast("char*") BytePointer buf);
     public native void Read(@Cast("char*") ByteBuffer buf);
     public native void Read(@Cast("char*") byte[] buf);
 
-    /*
-    Get the size of the buffer, regardless of where it is located.
-    */
+    /* Get the size of the buffer, regardless of where it is located. */
     public native @Cast("unsigned int") int GetSize();
 }
 
@@ -70,10 +62,25 @@ public class RemoteBuf extends RemoteBufConfig {
     public BufferManager() { super((Pointer)null); allocate(); }
     private native void allocate();
 
+    /* Creates buffer with specified id.
+     * Throws an exception if the buffer already exists
+     */
     public native Buffer CreateBuffer(@StdString BytePointer id);
     public native Buffer CreateBuffer(@StdString String id);
+
+    /* Gets the buffer with specified id.
+     * Throws an exception if the buffer doesn't exist
+     */
     public native Buffer GetBuffer(@StdString BytePointer id);
     public native Buffer GetBuffer(@StdString String id);
+
+    /* If the buffer exists, it is deleted.
+     * If it doesn't, an exception is thrown.
+     */
+    public native void DeleteBuffer(@StdString BytePointer id);
+    public native void DeleteBuffer(@StdString String id);
+
+    /* Returns true if the buffer with specified id exists. */
     public native @Cast("bool") boolean BufferExists(@StdString BytePointer id);
     public native @Cast("bool") boolean BufferExists(@StdString String id);
 }
