@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
   char buf[] = "hello";
   B->Write(buf, strlen(buf));
   B->Write(buf, strlen(buf));
-  B->WriteDone();
+  B->Flush();
 
   B = BM.GetBuffer("hi");
   char *buf2 = new char[B->GetSize()];
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
   Buffer *B2 = BM.CreateBuffer("hi2");
   assert(BM.BufferExists("hi2"));
   B2->Write(buf, strlen(buf));
-  B2->WriteDone();
+  B2->Flush();
   BM.DeleteBuffer("hi2");
   assert(!BM.BufferExists("hi2"));
 

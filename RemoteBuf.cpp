@@ -4,7 +4,7 @@ using namespace RemoteBuf;
 
 /* Buffer */
 Buffer::Buffer()
-  : WriteBegan(false), Size(0) {}
+  : WriteInProgress(false), BufferIsRemote(false), Size(0) {}
 
 Buffer::~Buffer() {}
 
@@ -15,45 +15,51 @@ void Buffer::Write(char *buf, unsigned int size) {
   Size = LocalBuf.size();
 }
 
-void Buffer::WriteDone() {
+void Buffer::Flush() {
   assert(Size == LocalBuf.size());
 
+  if (WriteInProgress)
+    return;
+
   // transfer async
-  WriteBegan = true;
-  WriteFuture = std::async(std::launch::async, &Buffer::WriteRemote, this, std::ref(LocalBuf));
+  WriteInProgress = true;
+  WriteFuture = std::async(std::launch::async, &Buffer::WriteRemote, this);
 }
 
 void Buffer::Read(char *buf) {
-  assert(WriteBegan);
+  assert(Size == LocalBuf.size());
 
-  // check if the async write was successful
-  if (!WriteFuture.get()) {
-    throw std::runtime_error("There was an error writting to remote");
-  }
+  // if a write is in progress, wait for it to finish
+  if (WriteInProgress)
+    if (!WriteFuture.get())
+      throw std::runtime_error("There was an error writting to remote");
 
-  // synchronously read
-  if (!ReadRemote(LocalBuf)) {
-    throw std::runtime_error("Could not remote read");
-  }
+  // check if the buffer was pushed to remote
+  if (BufferIsRemote)
+    // if it was, synchronously read
+    if (!ReadRemote())
+      throw std::runtime_error("Could not remote read");
 
   std::copy(LocalBuf.begin(), LocalBuf.end(), buf);
-  WriteBegan = false;
 }
 
 unsigned int Buffer::GetSize() {
   return Size;
 }
 
-bool Buffer::WriteRemote(std::vector<char> &buf) {
+bool Buffer::WriteRemote() {
   std::this_thread::sleep_for(std::chrono::microseconds(5));
   //buf.clear(); TODO: uncomment this and do actual rdma copy
   //std::vector<char>(buf).swap(buf);
+  WriteInProgress = false;
+  BufferIsRemote = true;
   return true;
 }
 
-bool Buffer::ReadRemote(std::vector<char> &buf) {
+bool Buffer::ReadRemote() {
   std::this_thread::sleep_for(std::chrono::microseconds(5));
   // TODO: do actual rdma read
+  BufferIsRemote = false;
   return true;
 }
 
@@ -61,9 +67,8 @@ bool Buffer::ReadRemote(std::vector<char> &buf) {
 BufferManager::BufferManager() { }
 
 BufferManager::~BufferManager() {
-  for (auto B: Buffers) {
+  for (auto B: Buffers)
     delete B.second;
-  }
 }
 
 Buffer *BufferManager::CreateBuffer(const std::string id) {

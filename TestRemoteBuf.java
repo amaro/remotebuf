@@ -10,7 +10,7 @@ public class TestRemoteBuf {
 
     String msg = "hihihi";
     B.Write(msg.getBytes(), msg.getBytes().length);
-    B.WriteDone();
+    B.Flush();
     byte result[] = new byte[B.GetSize()];
     B.Read(result);
     String strRes = new String(result);
@@ -22,7 +22,7 @@ public class TestRemoteBuf {
     B2.Write(msg.getBytes(), msg.getBytes().length);
     msg = "there";
     B2.Write(msg.getBytes(), msg.getBytes().length);
-    B2.WriteDone();
+    B2.Flush();
     byte result2[] = new byte[B2.GetSize()];
     B2.Read(result2);
     String strRes2 = new String(result2);

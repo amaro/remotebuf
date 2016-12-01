@@ -35,8 +35,8 @@ public class RemoteBuf extends RemoteBufConfig {
     public native void Write(@Cast("char*") ByteBuffer buf, @Cast("unsigned int") int s);
     public native void Write(@Cast("char*") byte[] buf, @Cast("unsigned int") int s);
 
-    /* Called after writing is done */
-    public native void WriteDone();
+    /* Flush pending requests (write) */
+    public native void Flush();
 
     /* Copy LocalBuf to buf */
     public native void Read(@Cast("char*") BytePointer buf);

@@ -15,8 +15,8 @@ class Buffer {
     /* Writes buf with size s to LocalBuf */
     void Write(char *buf, unsigned int s);
 
-    /* Called after writing is done */
-    void WriteDone();
+    /* Flush pending requests (write) */
+    void Flush();
 
     /* Copy LocalBuf to buf */
     void Read(char *buf);
@@ -25,12 +25,13 @@ class Buffer {
     unsigned int GetSize();
   private:
     std::vector<char> LocalBuf;
-    bool WriteBegan;
+    bool WriteInProgress;
+    bool BufferIsRemote;
     unsigned int Size;
     std::future<bool> WriteFuture;
 
-    bool WriteRemote(std::vector<char> &buf);
-    bool ReadRemote(std::vector<char> &buf);
+    bool WriteRemote();
+    bool ReadRemote();
 };
 
 /* BufferManager not reentrant */
