@@ -16,8 +16,11 @@ java: libRemoteBuf.so TestRemoteBuf.class libjniRemoteBufConfig.so
 libjniRemoteBufConfig.so: RemoteBuf.class
 	java -jar $(JAVACPPJAR) RemoteBuf
 
-TestRemoteBuf.class: RemoteBuf.class TestRemoteBuf.java
+TestRemoteBuf.class: RemoteBuf.class ROutputStream.class TestRemoteBuf.java
 	javac -cp $(JAVACPPJAR):. TestRemoteBuf.java
+
+ROutputStream.class: ROutputStream.java
+	javac -cp $(JAVACPPJAR):. ROutputStream.java
 
 RemoteBuf.class: RemoteBuf.java
 	javac -cp $(JAVACPPJAR):. RemoteBuf.java
