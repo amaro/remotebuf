@@ -1,0 +1,24 @@
+import java.nio.channels.WritableByteChannel;
+import java.nio.ByteBuffer;
+
+public class RWritableByteChannel implements WritableByteChannel {
+  RemoteBuf.Buffer Buffer;
+
+  public RWritableByteChannel(RemoteBuf.Buffer B) {
+    Buffer = B;
+  }
+
+  public int write(ByteBuffer b) {
+    byte arr[] = b.array();
+    Buffer.Write(arr, arr.length);
+    return arr.length;
+  }
+
+  public void close() {
+    Buffer.Flush();
+  }
+
+  public boolean isOpen() {
+    return true;
+  }
+}

@@ -1,5 +1,6 @@
 import org.bytedeco.javacpp.*;
 import java.io.*;
+import java.nio.ByteBuffer;
 
 public class TestRemoteBuf {
   public static void main(String[] args) {
@@ -45,6 +46,19 @@ public class TestRemoteBuf {
       String strRes3 = new String(result3);
       if (!strRes3.equals(msg))
         throw new RuntimeException("buffers didn't match: " + strRes3);
+    }
+
+    {
+      RemoteBuf.Buffer buf = BM.CreateBuffer("buf4");
+      String msg = "buffeeeerrrrr4";
+      RWritableByteChannel WBC = new RWritableByteChannel(buf);
+      ByteBuffer BB = ByteBuffer.wrap(msg.getBytes());
+      WBC.write(BB);
+      byte res[] = new byte[buf.GetSize()];
+      buf.Read(res);
+      String resStr = new String(res);
+      if (!resStr.equals(msg))
+        throw new RuntimeException("buffers didn't match: " + resStr);
     }
 
     System.out.println("OK");
