@@ -15,12 +15,12 @@ public class ROutputStream extends OutputStream {
 
   @Override
   public void flush() {
-    Buffer.Flush();
+    Buffer.flush();
   }
 
   @Override
   public void write(byte[] b) {
-    Buffer.Write(b, b.length);
+    Buffer.write(b, b.length);
   }
 
   @Override
@@ -33,6 +33,6 @@ public class ROutputStream extends OutputStream {
   public void write(int b) {
     byte buf[] = new byte[1];
     buf[0] = (byte) b;
-    Buffer.Write(buf, 1);
+    Buffer.write(buf, 1);
   }
 }

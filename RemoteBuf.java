@@ -32,20 +32,20 @@ public class RemoteBuf extends RemoteBufConfig {
     private native void allocate();
 
     /* Writes buf with size s to LocalBuf */
-    public native void Write(@Cast("char*") BytePointer buf, @Cast("unsigned int") int s);
-    public native void Write(@Cast("char*") ByteBuffer buf, @Cast("unsigned int") int s);
-    public native void Write(@Cast("char*") byte[] buf, @Cast("unsigned int") int s);
+    public native void write(@Cast("char*") BytePointer buf, @Cast("unsigned int") int s);
+    public native void write(@Cast("char*") ByteBuffer buf, @Cast("unsigned int") int s);
+    public native void write(@Cast("char*") byte[] buf, @Cast("unsigned int") int s);
 
     /* Flush pending requests (write) */
-    public native void Flush();
+    public native void flush();
 
     /* Copy LocalBuf to buf */
-    public native void Read(@Cast("char*") BytePointer buf);
-    public native void Read(@Cast("char*") ByteBuffer buf);
-    public native void Read(@Cast("char*") byte[] buf);
+    public native void read(@Cast("char*") BytePointer buf);
+    public native void read(@Cast("char*") ByteBuffer buf);
+    public native void read(@Cast("char*") byte[] buf);
 
     /* Get the size of the buffer, regardless of where it is located. */
-    public native @Cast("unsigned int") int GetSize();
+    public native @Cast("unsigned int") int getSize();
 }
 
 /* BufferManager not reentrant */
@@ -66,24 +66,24 @@ public class RemoteBuf extends RemoteBufConfig {
     /* Creates buffer with specified id.
      * Throws an exception if the buffer already exists
      */
-    public native Buffer CreateBuffer(@StdString BytePointer id);
-    public native Buffer CreateBuffer(@StdString String id);
+    public native Buffer createBuffer(@StdString BytePointer id);
+    public native Buffer createBuffer(@StdString String id);
 
     /* Gets the buffer with specified id.
      * Throws an exception if the buffer doesn't exist
      */
-    public native Buffer GetBuffer(@StdString BytePointer id);
-    public native Buffer GetBuffer(@StdString String id);
+    public native Buffer getBuffer(@StdString BytePointer id);
+    public native Buffer getBuffer(@StdString String id);
 
     /* If the buffer exists, it is deleted.
      * If it doesn't, an exception is thrown.
      */
-    public native void DeleteBuffer(@StdString BytePointer id);
-    public native void DeleteBuffer(@StdString String id);
+    public native void deleteBuffer(@StdString BytePointer id);
+    public native void deleteBuffer(@StdString String id);
 
     /* Returns true if the buffer with specified id exists. */
-    public native @Cast("bool") boolean BufferExists(@StdString BytePointer id);
-    public native @Cast("bool") boolean BufferExists(@StdString String id);
+    public native @Cast("bool") boolean bufferExists(@StdString BytePointer id);
+    public native @Cast("bool") boolean bufferExists(@StdString String id);
 }
 
 

@@ -8,14 +8,14 @@ Buffer::Buffer()
 
 Buffer::~Buffer() {}
 
-void Buffer::Write(char *buf, unsigned int size) {
+void Buffer::write(char *buf, unsigned int size) {
   assert(Size == LocalBuf.size());
 
   LocalBuf.insert(LocalBuf.end(), buf, buf + size);
   Size = LocalBuf.size();
 }
 
-void Buffer::Flush() {
+void Buffer::flush() {
   assert(Size == LocalBuf.size());
 
   if (WriteInProgress)
@@ -23,10 +23,10 @@ void Buffer::Flush() {
 
   // transfer async
   WriteInProgress = true;
-  WriteFuture = std::async(std::launch::async, &Buffer::WriteRemote, this);
+  WriteFuture = std::async(std::launch::async, &Buffer::writeRemote, this);
 }
 
-void Buffer::Read(char *buf) {
+void Buffer::read(char *buf) {
   assert(Size == LocalBuf.size());
 
   // if a write is in progress, wait for it to finish
@@ -37,17 +37,17 @@ void Buffer::Read(char *buf) {
   // check if the buffer was pushed to remote
   if (BufferIsRemote)
     // if it was, synchronously read
-    if (!ReadRemote())
+    if (!readRemote())
       throw std::runtime_error("Could not remote read");
 
   std::copy(LocalBuf.begin(), LocalBuf.end(), buf);
 }
 
-unsigned int Buffer::GetSize() {
+unsigned int Buffer::getSize() {
   return Size;
 }
 
-bool Buffer::WriteRemote() {
+bool Buffer::writeRemote() {
   std::this_thread::sleep_for(std::chrono::microseconds(5));
   //buf.clear(); TODO: uncomment this and do actual rdma copy
   //std::vector<char>(buf).swap(buf);
@@ -56,7 +56,7 @@ bool Buffer::WriteRemote() {
   return true;
 }
 
-bool Buffer::ReadRemote() {
+bool Buffer::readRemote() {
   std::this_thread::sleep_for(std::chrono::microseconds(5));
   // TODO: do actual rdma read
   BufferIsRemote = false;
@@ -71,10 +71,10 @@ BufferManager::~BufferManager() {
     delete B.second;
 }
 
-Buffer *BufferManager::CreateBuffer(const std::string id) {
+Buffer *BufferManager::createBuffer(const std::string id) {
   std::lock_guard<std::mutex> lock(BM);
 
-  if (BufferExists(id))
+  if (bufferExists(id))
     throw std::runtime_error("Buffer already exists");
 
   Buffer *B = new Buffer();
@@ -82,19 +82,19 @@ Buffer *BufferManager::CreateBuffer(const std::string id) {
   return B;
 }
 
-Buffer *BufferManager::GetBuffer(const std::string id) {
+Buffer *BufferManager::getBuffer(const std::string id) {
   std::lock_guard<std::mutex> lock(BM);
 
-  if (!BufferExists(id))
+  if (!bufferExists(id))
     throw std::runtime_error("Buffer doesn't exist");
 
   return Buffers[id];
 }
 
-void BufferManager::DeleteBuffer(const std::string id) {
+void BufferManager::deleteBuffer(const std::string id) {
   std::lock_guard<std::mutex> lock(BM);
 
-  if (!BufferExists(id))
+  if (!bufferExists(id))
     throw std::runtime_error("Buffer doesn't exist");
 
   delete Buffers[id];
@@ -102,6 +102,6 @@ void BufferManager::DeleteBuffer(const std::string id) {
 }
 
 /* assumes lock is held */
-bool BufferManager::BufferExists(const std::string id) {
+bool BufferManager::bufferExists(const std::string id) {
   return Buffers.count(id) == 1;
 }

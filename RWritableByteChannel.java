@@ -10,12 +10,12 @@ public class RWritableByteChannel implements WritableByteChannel {
 
   public int write(ByteBuffer b) {
     byte arr[] = b.array();
-    Buffer.Write(arr, arr.length);
+    Buffer.write(arr, arr.length);
     return arr.length;
   }
 
   public void close() {
-    Buffer.Flush();
+    Buffer.flush();
   }
 
   public boolean isOpen() {

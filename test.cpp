@@ -9,31 +9,31 @@ using namespace RemoteBuf;
 
 int main(int argc, char *argv[]) {
   BufferManager BM;
-  Buffer *B = BM.CreateBuffer("hi");
-  assert(BM.BufferExists("hi"));
+  Buffer *B = BM.createBuffer("hi");
+  assert(BM.bufferExists("hi"));
 
   char buf[] = "hello";
-  B->Write(buf, strlen(buf));
-  B->Write(buf, strlen(buf));
-  B->Flush();
+  B->write(buf, strlen(buf));
+  B->write(buf, strlen(buf));
+  B->flush();
 
-  B = BM.GetBuffer("hi");
-  char *buf2 = new char[B->GetSize()];
-  B->Read(buf2);
+  B = BM.getBuffer("hi");
+  char *buf2 = new char[B->getSize()];
+  B->read(buf2);
 
-  if (memcmp("hellohello", buf2, B->GetSize()) != 0) {
+  if (memcmp("hellohello", buf2, B->getSize()) != 0) {
     std::cout << "strings not equal\n";
     return 1;
   }
 
   delete[] buf2;
 
-  Buffer *B2 = BM.CreateBuffer("hi2");
-  assert(BM.BufferExists("hi2"));
-  B2->Write(buf, strlen(buf));
-  B2->Flush();
-  BM.DeleteBuffer("hi2");
-  assert(!BM.BufferExists("hi2"));
+  Buffer *B2 = BM.createBuffer("hi2");
+  assert(BM.bufferExists("hi2"));
+  B2->write(buf, strlen(buf));
+  B2->flush();
+  BM.deleteBuffer("hi2");
+  assert(!BM.bufferExists("hi2"));
 
   std::cout << "test passed\n";
   return 0;
