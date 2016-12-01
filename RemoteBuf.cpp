@@ -72,6 +72,8 @@ BufferManager::~BufferManager() {
 }
 
 Buffer *BufferManager::CreateBuffer(const std::string id) {
+  std::lock_guard<std::mutex> lock(BM);
+
   if (BufferExists(id))
     throw std::runtime_error("Buffer already exists");
 
@@ -81,6 +83,8 @@ Buffer *BufferManager::CreateBuffer(const std::string id) {
 }
 
 Buffer *BufferManager::GetBuffer(const std::string id) {
+  std::lock_guard<std::mutex> lock(BM);
+
   if (!BufferExists(id))
     throw std::runtime_error("Buffer doesn't exist");
 
@@ -88,6 +92,8 @@ Buffer *BufferManager::GetBuffer(const std::string id) {
 }
 
 void BufferManager::DeleteBuffer(const std::string id) {
+  std::lock_guard<std::mutex> lock(BM);
+
   if (!BufferExists(id))
     throw std::runtime_error("Buffer doesn't exist");
 
@@ -95,6 +101,7 @@ void BufferManager::DeleteBuffer(const std::string id) {
   Buffers.erase(id);
 }
 
+/* assumes lock is held */
 bool BufferManager::BufferExists(const std::string id) {
   return Buffers.count(id) == 1;
 }

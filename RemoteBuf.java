@@ -15,6 +15,7 @@ public class RemoteBuf extends RemoteBufConfig {
 // #include <unordered_map>
 // #include <cassert>
 // #include <stdexcept>
+// #include <mutex>
 /* Buffer is not reentrant */
 @Namespace("RemoteBuf") @NoOffset public static class Buffer extends Pointer {
     static { Loader.load(); }

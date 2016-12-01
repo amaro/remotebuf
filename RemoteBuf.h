@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <cassert>
 #include <stdexcept>
+#include <mutex>
 
 namespace RemoteBuf {
 /* Buffer is not reentrant */
@@ -59,5 +60,6 @@ class BufferManager {
     bool BufferExists(const std::string id);
   private:
     std::unordered_map<std::string, Buffer *> Buffers;
+    std::mutex BM;
 };
 }
