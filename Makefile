@@ -1,5 +1,5 @@
 CXXFLAGS += -Wall -Werror
-JAVACPPPATH := /home/amaro/javardma/javacpp/target
+JAVACPPPATH := ./javacpp/target
 JAVACPPJAR := $(JAVACPPPATH)/javacpp.jar
 
 lib: libRemoteBuf.so
@@ -40,4 +40,4 @@ RemoteBufConfig.class: RemoteBufConfig.java
 	javac -cp $(JAVACPPJAR) RemoteBufConfig.java
 
 clean:
-	rm -rf *.o *.so *.class linux-x86_64 test
+	rm -rf *.o *.so *.class *.jar linux-x86_64 test
