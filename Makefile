@@ -11,7 +11,10 @@ libRemoteBuf.so: RemoteBuf.cpp RemoteBuf.h
 test: libRemoteBuf.so test.cpp
 	g++ $(CXXFLAGS) -L. test.cpp -o test -lRemoteBuf
 
-java: libRemoteBuf.so TestRemoteBuf.class libjniRemoteBufConfig.so
+java: libRemoteBuf.so TestRemoteBuf.class remoteMem.jar
+
+remoteMem.jar: libjniRemoteBufConfig.so RemoteBuf.class ROutputStream.class RWritableByteChannel.class
+	jar cf remoteMem.jar RemoteBuf.class ROutputStream.class RWritableByteChannel.class
 
 libjniRemoteBufConfig.so: RemoteBuf.class
 	java -jar $(JAVACPPJAR) RemoteBuf

@@ -2,3 +2,4 @@
 *.so
 *.o
 linux-x86_64
+*.jar
