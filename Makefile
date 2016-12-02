@@ -14,7 +14,7 @@ test: libRemoteBuf.so test.cpp
 java: libRemoteBuf.so TestRemoteBuf.class remoteMem.jar
 
 remoteMem.jar: libjniRemoteBufConfig.so RemoteBuf.class ROutputStream.class RWritableByteChannel.class RemoteBufConfig.class
-	jar cf remoteMem.jar RemoteBuf.class ROutputStream.class RWritableByteChannel.class RemoteBufConfig.class
+	jar cf remoteMem.jar RemoteBuf.class ROutputStream.class RWritableByteChannel.class RemoteBufConfig.class RemoteBuf$$Buffer.class RemoteBuf$$BufferManager.class
 
 libjniRemoteBufConfig.so: RemoteBuf.class
 	java -jar $(JAVACPPJAR) RemoteBuf
