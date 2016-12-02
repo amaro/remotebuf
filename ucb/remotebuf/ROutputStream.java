@@ -1,3 +1,5 @@
+package ucb.remotebuf;
+
 import java.io.OutputStream;
 import java.io.IOException;
 

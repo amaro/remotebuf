@@ -1,6 +1,7 @@
 CXXFLAGS += -Wall -Werror
 JAVACPPPATH := ./javacpp/target
 JAVACPPJAR := $(JAVACPPPATH)/javacpp.jar
+PKGPATH := ucb/remotebuf
 
 lib: libRemoteBuf.so
 
@@ -13,31 +14,32 @@ test: libRemoteBuf.so test.cpp
 
 java: libRemoteBuf.so TestRemoteBuf.class remoteMem.jar
 
-remoteMem.jar: libjniRemoteBufConfig.so RemoteBuf.class ROutputStream.class RWritableByteChannel.class RemoteBufConfig.class
-	jar cf remoteMem.jar RemoteBuf.class ROutputStream.class RWritableByteChannel.class RemoteBufConfig.class 'RemoteBuf$$Buffer.class' 'RemoteBuf$$BufferManager.class'
+TestRemoteBuf.class: TestRemoteBuf.java remoteMem.jar
+	javac -cp $(JAVACPPJAR):remoteMem.jar $<
 
-libjniRemoteBufConfig.so: RemoteBuf.class
-	java -jar $(JAVACPPJAR) RemoteBuf
+remoteMem.jar: $(PKGPATH)/libjniRemoteBufConfig.so $(PKGPATH)/RemoteBuf.class $(PKGPATH)/ROutputStream.class $(PKGPATH)/RWritableByteChannel.class $(PKGPATH)/config/RemoteBuf.class
+	jar cf remoteMem.jar $(PKGPATH)/*.class $(PKGPATH)/config/*.class
 
-TestRemoteBuf.class: RemoteBuf.class ROutputStream.class RWritableByteChannel.class TestRemoteBuf.java
-	javac -cp $(JAVACPPJAR):. TestRemoteBuf.java
+$(PKGPATH)/libjniRemoteBufConfig.so: $(PKGPATH)/RemoteBuf.class
+	cp RemoteBuf.h $(PKGPATH)
+	java -jar $(JAVACPPJAR) $(PKGPATH)/RemoteBuf
 
-ROutputStream.class: ROutputStream.java
-	javac -cp $(JAVACPPJAR):. ROutputStream.java
+$(PKGPATH)/ROutputStream.class: $(PKGPATH)/ROutputStream.java
+	javac -cp $(JAVACPPJAR):. $<
 
-RWritableByteChannel.class: RWritableByteChannel.java
-	javac -cp $(JAVACPPJAR):. RWritableByteChannel.java
+$(PKGPATH)/RWritableByteChannel.class: $(PKGPATH)/RWritableByteChannel.java
+	javac -cp $(JAVACPPJAR):. $<
 
-RemoteBuf.class: RemoteBuf.java
-	javac -cp $(JAVACPPJAR):. RemoteBuf.java
+$(PKGPATH)/RemoteBuf.class: $(PKGPATH)/RemoteBuf.java
+	javac -cp $(JAVACPPJAR):. $<
 
 # this is the automatically generated RemoteBuf java interface
-RemoteBuf.java: RemoteBufConfig.class
-	java -jar $(JAVACPPJAR) RemoteBufConfig
+$(PKGPATH)/RemoteBuf.java: $(PKGPATH)/config/RemoteBuf.class
+	java -jar $(JAVACPPJAR) $<
 
 # this is the first class that has to be built
-RemoteBufConfig.class: RemoteBufConfig.java
-	javac -cp $(JAVACPPJAR) RemoteBufConfig.java
+$(PKGPATH)/config/RemoteBuf.class: $(PKGPATH)/config/RemoteBuf.java
+	javac -cp $(JAVACPPJAR) $<
 
 clean:
-	rm -rf *.o *.so *.class *.jar linux-x86_64 test
+	rm -rf *.o *.so *.class *.jar $(PKGPATH)/*.h $(PKGPATH)/*.class $(PKGPATH)/config/*.class $(PKGPATH)/linux-x86_64 test

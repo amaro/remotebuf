@@ -1,6 +1,7 @@
 import org.bytedeco.javacpp.*;
 import java.io.*;
 import java.nio.ByteBuffer;
+import ucb.remotebuf.*;
 
 public class TestRemoteBuf {
   public static void main(String[] args) {
