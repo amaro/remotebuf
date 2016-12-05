@@ -1,4 +1,4 @@
-CXXFLAGS += -Wall -Werror
+CXXFLAGS += -Wall -Werror -std=c++11
 JAVACPPPATH := ./javacpp/target
 JAVACPPJAR := $(JAVACPPPATH)/javacpp.jar
 PKGPATH := ucb/remotebuf
