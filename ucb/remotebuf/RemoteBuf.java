@@ -38,6 +38,11 @@ public class RemoteBuf extends ucb.remotebuf.config.RemoteBuf {
     public native void write(@Cast("char*") ByteBuffer buf, @Cast("unsigned int") int s);
     public native void write(@Cast("char*") byte[] buf, @Cast("unsigned int") int s);
 
+    /* Writes buf with size s to LocalBuf at specified offset */
+    public native void write(@Cast("char*") BytePointer buf, @Cast("unsigned int") int s, @Cast("unsigned int") int off);
+    public native void write(@Cast("char*") ByteBuffer buf, @Cast("unsigned int") int s, @Cast("unsigned int") int off);
+    public native void write(@Cast("char*") byte[] buf, @Cast("unsigned int") int s, @Cast("unsigned int") int off);
+
     /* Flush pending requests (write) */
     public native void flush();
 

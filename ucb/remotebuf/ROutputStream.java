@@ -27,7 +27,7 @@ public class ROutputStream extends OutputStream {
 
   @Override
   public void write(byte[] b, int off, int len) throws IOException {
-    throw new IOException("(amaro) not implemented");
+    Buffer.write(b, len, off);
   }
 
   /* not 100% sure this works */

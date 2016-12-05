@@ -62,6 +62,25 @@ public class TestRemoteBuf {
         throw new RuntimeException("buffers didn't match: " + resStr);
     }
 
+    {
+      RemoteBuf.Buffer buf = BM.createBuffer("buf5");
+      String msg = "holahola";
+      ROutputStream OS = new ROutputStream(buf);
+      try {
+        OS.write(msg.getBytes());
+        OS.write(msg.getBytes(), 2, 4);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      OS.close();
+      byte res[] = new byte[buf.getSize()];
+      buf.read(res);
+      msg = "hoholalahola";
+      String resStr = new String(res);
+      if (!resStr.equals(msg))
+        throw new RuntimeException("buffers didn't match: " + resStr);
+    }
+
     System.out.println("OK");
   }
 }

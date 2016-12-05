@@ -9,9 +9,17 @@ Buffer::Buffer()
 Buffer::~Buffer() {}
 
 void Buffer::write(char *buf, unsigned int size) {
+  write(buf, size, LocalBuf.end());
+}
+
+void Buffer::write(char *buf, unsigned int size, unsigned int offset) {
+  write(buf, size, LocalBuf.begin() + offset);
+}
+
+void Buffer::write(char *buf, unsigned int size, std::vector<char>::iterator start) {
   assert(Size == LocalBuf.size());
 
-  LocalBuf.insert(LocalBuf.end(), buf, buf + size);
+  LocalBuf.insert(start, buf, buf + size);
   Size = LocalBuf.size();
 }
 
