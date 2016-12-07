@@ -2,15 +2,16 @@ CXXFLAGS += -Wall -Werror -std=c++11 -O3
 JAVACPPPATH := ./javacpp/target
 JAVACPPJAR := $(JAVACPPPATH)/javacpp.jar
 PKGPATH := ucb/remotebuf
+CXX ?= g++
 
 lib: libRemoteBuf.so
 
 libRemoteBuf.so: RemoteBuf.cpp RemoteBuf.h
-	g++-6 $(CXXFLAGS) -fPIC -c RemoteBuf.cpp -o RemoteBuf.o
-	g++-6 $(CXXFLAGS) -shared -Wl,-soname,libRemoteBuf.so -o libRemoteBuf.so RemoteBuf.o -pthread
+	$(CXX) $(CXXFLAGS) -fPIC -c RemoteBuf.cpp -o RemoteBuf.o
+	$(CXX) $(CXXFLAGS) -shared -Wl,-soname,libRemoteBuf.so -o libRemoteBuf.so RemoteBuf.o -pthread
 
 test: libRemoteBuf.so test.cpp
-	g++-6 $(CXXFLAGS) -L. test.cpp -o test -lRemoteBuf
+	$(CXX) $(CXXFLAGS) -L. test.cpp -o test -lRemoteBuf
 
 java: libRemoteBuf.so TestRemoteBuf.class remoteMem.jar
 
