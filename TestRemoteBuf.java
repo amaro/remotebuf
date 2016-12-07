@@ -40,8 +40,12 @@ public class TestRemoteBuf {
       RemoteBuf.Buffer B3 = BM.createBuffer("buf3");
       String msg = "buffeeeerrrrr3";
       ROutputStream OS = new ROutputStream(B3);
-      OS.write(msg.getBytes());
-      OS.close();
+      try {
+        OS.write(msg.getBytes());
+        OS.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
       byte result3[] = new byte[B3.getSize()];
       B3.read(result3);
       String strRes3 = new String(result3);

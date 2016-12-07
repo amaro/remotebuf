@@ -4,7 +4,9 @@ using namespace RemoteBuf;
 
 /* Buffer */
 Buffer::Buffer()
-  : WriteInProgress(false), BufferIsRemote(false), Size(0) {}
+  : WriteInProgress(false), BufferIsRemote(false), Size(0) {
+  LocalBuf.reserve(INITIAL_BUFFER_SIZE);
+}
 
 Buffer::~Buffer() {}
 
@@ -21,7 +23,7 @@ void Buffer::write(char *buf, unsigned int size) {
 void Buffer::write(char *buf, unsigned int size, unsigned int offset) {
 #ifdef DEBUG
   std::stringstream sstm;
-  sstm << "Buffer::write(buf, size, offset) on " << this;
+  sstm << "Buffer::write(buf," << size << "," << offset << ") on " << this;
   debug(sstm);
 #endif
 

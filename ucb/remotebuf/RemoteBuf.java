@@ -19,6 +19,9 @@ public class RemoteBuf extends ucb.remotebuf.config.RemoteBuf {
 // #include <stdexcept>
 // #include <mutex>
 // #include "utils.h"
+
+@Namespace("RemoteBuf") @MemberGetter public static native int INITIAL_BUFFER_SIZE();
+
 /* Buffer is not reentrant */
 @Namespace("RemoteBuf") @NoOffset public static class Buffer extends Pointer {
     static { Loader.load(); }

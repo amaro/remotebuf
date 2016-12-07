@@ -8,6 +8,9 @@
 #include "utils.h"
 
 namespace RemoteBuf {
+
+const int INITIAL_BUFFER_SIZE = 16384;
+
 /* Buffer is not reentrant */
 class Buffer {
   public:

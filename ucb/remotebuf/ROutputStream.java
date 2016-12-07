@@ -2,12 +2,17 @@ package ucb.remotebuf;
 
 import java.io.OutputStream;
 import java.io.IOException;
+import java.io.ByteArrayOutputStream;
 
 public class ROutputStream extends OutputStream {
   RemoteBuf.Buffer Buffer;
+  ByteArrayOutputStream LocalBuf;
+  boolean Flushed;
 
   public ROutputStream(RemoteBuf.Buffer B) {
     Buffer = B;
+    LocalBuf = new ByteArrayOutputStream();
+    Flushed = false;
   }
 
   @Override
@@ -17,24 +22,28 @@ public class ROutputStream extends OutputStream {
 
   @Override
   public void flush() {
-    Buffer.flush();
+    if (!Flushed) {
+      Flushed = true;
+      doActualWrite();
+    }
   }
 
   @Override
-  public void write(byte[] b) {
-    Buffer.write(b, b.length);
+  public void write(byte[] b) throws IOException {
+    write(b, 0, b.length);
   }
 
   @Override
   public void write(byte[] b, int off, int len) throws IOException {
-    Buffer.write(b, len, off);
+    LocalBuf.write(b, off, len);
   }
 
-  /* not 100% sure this works */
   @Override
   public void write(int b) {
-    byte buf[] = new byte[1];
-    buf[0] = (byte) b;
-    Buffer.write(buf, 1);
+    LocalBuf.write(b);
+  }
+
+  private void doActualWrite() {
+    Buffer.write(LocalBuf.toByteArray(), LocalBuf.size());
   }
 }
