@@ -21,6 +21,7 @@ remoteMem.jar: $(PKGPATH)/libjniRemoteBufConfig.so $(PKGPATH)/RemoteBuf.class $(
 	jar cf remoteMem.jar $(PKGPATH)/*.class $(PKGPATH)/config/*.class
 
 $(PKGPATH)/libjniRemoteBufConfig.so: $(PKGPATH)/RemoteBuf.class
+	cp utils.h $(PKGPATH)
 	cp RemoteBuf.h $(PKGPATH)
 	java -jar $(JAVACPPJAR) $(PKGPATH)/RemoteBuf
 

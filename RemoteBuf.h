@@ -5,6 +5,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <mutex>
+#include "utils.h"
 
 namespace RemoteBuf {
 /* Buffer is not reentrant */
