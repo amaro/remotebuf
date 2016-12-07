@@ -6,11 +6,11 @@ PKGPATH := ucb/remotebuf
 lib: libRemoteBuf.so
 
 libRemoteBuf.so: RemoteBuf.cpp RemoteBuf.h
-	g++ $(CXXFLAGS) -fPIC -c RemoteBuf.cpp -o RemoteBuf.o
-	g++ $(CXXFLAGS) -shared -Wl,-soname,libRemoteBuf.so -o libRemoteBuf.so RemoteBuf.o -pthread
+	g++-6 $(CXXFLAGS) -fPIC -c RemoteBuf.cpp -o RemoteBuf.o
+	g++-6 $(CXXFLAGS) -shared -Wl,-soname,libRemoteBuf.so -o libRemoteBuf.so RemoteBuf.o -pthread
 
 test: libRemoteBuf.so test.cpp
-	g++ $(CXXFLAGS) -L. test.cpp -o test -lRemoteBuf
+	g++-6 $(CXXFLAGS) -L. test.cpp -o test -lRemoteBuf
 
 java: libRemoteBuf.so TestRemoteBuf.class remoteMem.jar
 
