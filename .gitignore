@@ -3,3 +3,5 @@
 *.o
 linux-x86_64
 *.jar
+ucb/remotebuf/RemoteBuf.h
+ucb/remotebuf/utils.h

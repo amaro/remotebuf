@@ -2,7 +2,7 @@ CXXFLAGS += -Wall -Werror -std=c++11 -O3
 JAVACPPPATH := ./javacpp/target
 JAVACPPJAR := $(JAVACPPPATH)/javacpp.jar
 PKGPATH := ucb/remotebuf
-CXX ?= g++
+CXX := g++-6
 
 lib: libRemoteBuf.so
 

@@ -1,3 +1,6 @@
 [submodule "ddc"]
 	path = ddc
 	url = git@github.com:jcarreira/ddc.git
+[submodule "javacpp"]
+	path = javacpp
+	url = git@github.com:wabashos/javacpp
