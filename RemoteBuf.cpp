@@ -86,6 +86,7 @@ unsigned int Buffer::getSize() {
   return Size;
 }
 
+#ifdef RDMA
 bool Buffer::writeRemote() {
   // write to server
   Client.connect(RDMA_ADDR, RDMA_PORT);
@@ -117,6 +118,19 @@ bool Buffer::readRemote() {
   BufferIsRemote = false;
   return true;
 }
+#else // for testing purposes onlye
+bool Buffer::writeRemote() {
+  WriteInProgress = false;
+  BufferIsRemote = true;
+  return true;
+}
+
+bool Buffer::readRemote() {
+  assert(BufferIsRemote);
+  BufferIsRemote = false;
+  return true;
+}
+#endif
 
 /* BufferManager */
 BufferManager::BufferManager() {
