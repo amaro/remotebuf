@@ -1,4 +1,17 @@
-CXXFLAGS += -Wall -Werror -std=c++11 -O3
+INCLUDE := -I./ddc/ -I./ddc/third_party/libcuckoo/cityhash-1.1.1/src/
+DDCSRC := ./ddc/src
+LIBSPATH := -L$(DDCSRC)/object_store/ \
+  -L$(DDCSRC)/client/ \
+  -L$(DDCSRC)/server/ \
+  -L$(DDCSRC)/common/ \
+  -L$(DDCSRC)/authentication/ \
+  -L$(DDCSRC)/utils/
+
+LIBS := ./ddc/third_party/libcuckoo/cityhash-1.1.1/src/.libs/libcityhash.a \
+  -lobjstore -lclient -libverbs -lrdmacm -lauthentication -lutils -lcommon -lserver
+
+CXXFLAGS += -Wall -Werror -std=c++1z -O3 $(INCLUDE)
+LDFLAGS := $(LIBSPATH) $(LIBS)
 JAVACPPPATH := ./javacpp/target
 JAVACPPJAR := $(JAVACPPPATH)/javacpp.jar
 PKGPATH := ucb/remotebuf
@@ -8,7 +21,7 @@ lib: libRemoteBuf.so
 
 libRemoteBuf.so: RemoteBuf.cpp RemoteBuf.h
 	$(CXX) $(CXXFLAGS) -fPIC -c RemoteBuf.cpp -o RemoteBuf.o
-	$(CXX) $(CXXFLAGS) -shared -Wl,-soname,libRemoteBuf.so -o libRemoteBuf.so RemoteBuf.o -pthread
+	$(CXX) $(CXXFLAGS) -shared -Wl,-soname,libRemoteBuf.so -o libRemoteBuf.so RemoteBuf.o $(LDFLAGS)
 
 test: libRemoteBuf.so test.cpp
 	$(CXX) $(CXXFLAGS) -L. test.cpp -o test -lRemoteBuf

@@ -87,17 +87,33 @@ unsigned int Buffer::getSize() {
 }
 
 bool Buffer::writeRemote() {
-  std::this_thread::sleep_for(std::chrono::microseconds(5));
-  //buf.clear(); TODO: uncomment this and do actual rdma copy
-  //std::vector<char>(buf).swap(buf);
+  // write to server
+  Client.connect(RDMA_ADDR, RDMA_PORT);
+  Alloc = Client.allocate(Size);
+  Client.write_sync(Alloc, 0, Size, &LocalBuf[0]);
+
+  // clear local buffer
+  LocalBuf.clear();
+  std::vector<char>(LocalBuf).swap(LocalBuf);
+
+  // management stuff
   WriteInProgress = false;
   BufferIsRemote = true;
+
+  // done
   return true;
 }
 
 bool Buffer::readRemote() {
-  std::this_thread::sleep_for(std::chrono::microseconds(5));
-  // TODO: do actual rdma read
+  assert(BufferIsRemote);
+
+  // reserve local space
+  LocalBuf.resize(Size);
+
+  // read from server
+  Client.read_sync(Alloc, 0, Size, &LocalBuf[0]);
+
+  // management stuff
   BufferIsRemote = false;
   return true;
 }

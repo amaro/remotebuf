@@ -14,12 +14,13 @@ int main(int argc, char *argv[]) {
 
   char buf[] = "hello";
   B->write(buf, strlen(buf));
-  B->write(buf, strlen(buf));
   B->flush();
 
   B = BM.getBuffer("hi");
   char *buf2 = new char[B->getSize()];
   B->read(buf2);
+
+  std::cout << "read: " << buf2 << "\n";
 
   if (memcmp("hellohello", buf2, B->getSize()) != 0) {
     std::cout << "strings not equal\n";

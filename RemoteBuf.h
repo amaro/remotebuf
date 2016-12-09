@@ -5,11 +5,15 @@
 #include <cassert>
 #include <stdexcept>
 #include <mutex>
+#include <src/client/BladeClient.h>
+#include <src/common/AllocationRecord.h>
 #include "utils.h"
 
 namespace RemoteBuf {
 
 const int INITIAL_BUFFER_SIZE = 16384;
+const char RDMA_PORT[] = "12345";
+const char RDMA_ADDR[] = "10.10.49.94";
 
 /* Buffer is not reentrant */
 class Buffer {
@@ -37,6 +41,9 @@ class Buffer {
     bool BufferIsRemote;
     unsigned int Size;
     std::future<bool> WriteFuture;
+
+    sirius::AllocRec Alloc;
+    sirius::BladeClient Client;
 
     bool writeRemote();
     bool readRemote();
