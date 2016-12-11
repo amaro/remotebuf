@@ -58,3 +58,8 @@ $(PKGPATH)/config/RemoteBuf.class: $(PKGPATH)/config/RemoteBuf.java
 
 clean:
 	rm -rf *.o *.so *.class *.jar $(PKGPATH)/*.h $(PKGPATH)/*.class $(PKGPATH)/config/*.class $(PKGPATH)/linux-x86_64 test
+
+
+runtest:
+	cp javacpp/target/javacpp.jar .
+	java -classpath "remoteMem.jar:javacpp.jar" TestRemoteBuf
