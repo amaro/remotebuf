@@ -9,7 +9,7 @@ public class ROutputStream extends OutputStream {
   private RemoteBuf.Buffer Buffer;
 
   /* Amount of data to buffer before flushing to the Rmem C++ library */
-  private static final int LocalBufSize = 4*1024;
+  private static final int LocalBufSize = 1024*1024;
   private ByteBuffer LocalBuf;
 
   private boolean Flushed;

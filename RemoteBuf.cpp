@@ -134,6 +134,12 @@ bool Buffer::readRemote() {
 
 /* BufferManager */
 BufferManager::BufferManager() {
+#ifdef RDMA
+  std::cout << "RMEM using RDMA\n";
+#else
+  std::cout << "RMEM using local memory (testing)\n";
+#endif
+
 #ifdef DEBUG
 	debug("BufferManager::BufferManager()");
 #endif
