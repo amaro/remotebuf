@@ -32,6 +32,7 @@ public class ROutputStream extends OutputStream {
     if (!Flushed) {
       Flushed = true;
       doActualWrite();
+      Buffer.flush();
     }
   }
 
