@@ -17,10 +17,10 @@ public class TestRemoteBuf {
     System.out.println(Arrays.toString(buf));
     BM.write(a, buf, s);
 
-    byte buf_in[] = new byte[10];
-    BM.read(a, buf_in, 5);
+    int readLen = BM.get_read_alloc(a);
+    byte buf_in[] = new byte[readLen];
+    BM.read(buf_in);
     System.out.println(Arrays.toString(buf_in));
-
 
     System.out.println("OK");
   }
