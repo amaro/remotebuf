@@ -1,6 +1,16 @@
+#include "math.h"
 #include "RemoteBuf.h"
 
 using namespace RemoteBuf;
+
+/* Simulated Latency/Bandwidth of RMEM in us and Bytes/us */
+/* 5us 100 Gb/s */
+//#define RMEM_LAT 1
+#define RMEM_LAT 5
+
+#define RMEM_BW 1200  /* 10 Gb/S */
+//#define RMEM_BW 5000  /* 40 Gb/S */
+//#define RMEM_BW 12000 /* 100 Gb/S */
 
 /* Buffer */
 Buffer::Buffer()
@@ -118,7 +128,7 @@ bool Buffer::readRemote() {
   BufferIsRemote = false;
   return true;
 }
-#else // for testing purposes onlye
+#else // for testing purposes only
 bool Buffer::writeRemote() {
   WriteInProgress = false;
   BufferIsRemote = true;
@@ -127,6 +137,16 @@ bool Buffer::writeRemote() {
 
 bool Buffer::readRemote() {
   assert(BufferIsRemote);
+
+  /* Simulate Remote Memory latency/bandwidth (rounded to nearest us) */
+  int64_t waitTime = RMEM_LAT + std::ceil((double)Size / RMEM_BW);
+#ifdef DEBUG
+  std::stringstream sstm;
+  sstm << "Buffer::readRemote() waiting " << waitTime << " us to write " << Size << " bytes";
+  debug(sstm)
+#endif
+  std::this_thread::sleep_for(std::chrono::microseconds(waitTime));
+
   BufferIsRemote = false;
   return true;
 }
@@ -135,7 +155,7 @@ bool Buffer::readRemote() {
 /* BufferManager */
 BufferManager::BufferManager() {
 #ifdef RDMA
-  std::cout << "RMEM using RDMA\n";
+  std::cout << "RMEM using RDMA 1\n";
 #else
   std::cout << "RMEM using local memory (testing)\n";
 #endif
