@@ -28,6 +28,7 @@ class BufferManager {
   private:
     sirius::BladeFileClient Client;
     sirius::FileAllocRec read_alloc;
+    bool isConnected;
 };
 
 }
