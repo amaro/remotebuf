@@ -70,8 +70,6 @@ void Buffer::flush() {
 }
 
 void Buffer::read(char *buf) {
-  assert(Size == LocalBuf.size());
-
 #ifdef DEBUG
   std::stringstream sstm;
   sstm << "Buffer::read() on " << this;
