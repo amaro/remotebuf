@@ -4,13 +4,18 @@
 using namespace RemoteBuf;
 
 /* Simulated Latency/Bandwidth of RMEM in us and Bytes/us */
-/* 5us 100 Gb/s */
+//#define RMEM_LAT 0
 //#define RMEM_LAT 1
 #define RMEM_LAT 5
+//#define RMEM_LAT 10
+//#define RMEM_LAT 100
 
+//#define RMEM_BW 12 /* ~100 Mb */
+//#define RMEM_BW 120 /* 1 Gb/S */
 #define RMEM_BW 1200  /* 10 Gb/S */
-//#define RMEM_BW 5000  /* 40 Gb/S */
-//#define RMEM_BW 12000 /* 100 Gb/S */
+// #define RMEM_BW 5000  /* 40 Gb/S */
+//#define RMEM_BW 12000 /* 100 Gb/S*/
+//#define RMEM_BW 0 /* INF */
 
 /* Buffer */
 Buffer::Buffer()
@@ -139,11 +144,15 @@ bool Buffer::readRemote() {
   assert(BufferIsRemote);
 
   /* Simulate Remote Memory latency/bandwidth (rounded to nearest us) */
-  int64_t waitTime = RMEM_LAT + std::ceil((double)Size / RMEM_BW);
+  #if RMEM_BW == 0
+    int64_t waitTime = RMEM_LAT;
+  #else
+    int64_t waitTime = RMEM_LAT + std::ceil((double)Size / RMEM_BW);
+  #endif
 #ifdef DEBUG
   std::stringstream sstm;
   sstm << "Buffer::readRemote() waiting " << waitTime << " us to write " << Size << " bytes";
-  debug(sstm)
+  debug(sstm);
 #endif
   std::this_thread::sleep_for(std::chrono::microseconds(waitTime));
 
@@ -194,7 +203,7 @@ Buffer *BufferManager::getBuffer(const std::string id) {
 
 #ifdef DEBUG
   std::stringstream sstm;
-  sstm << "BufferManager::getBuffer(" + id + ") = " << Buffers[id];
+  sstm << "BufferManager::getBuffer(" << id << ") = " << Buffers[id];
   debug(sstm);
 #endif
   return Buffers[id];
