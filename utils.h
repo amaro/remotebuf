@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 
+#ifdef DEBUG
 void debug(const std::string &msg) {
   auto t = std::time(nullptr);
   auto tm = *std::localtime(&t);
@@ -13,3 +14,7 @@ void debug(const std::string &msg) {
 void debug(const std::stringstream &sstm) {
   debug(sstm.str());
 }
+#else
+void debug(const std::string &msg) {}
+void debug(const std::stringstream &sstm) {}
+#endif
