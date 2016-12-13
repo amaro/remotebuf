@@ -42,7 +42,7 @@ class Buffer {
     unsigned int Size;
     std::future<bool> WriteFuture;
 
-    sirius::AllocRec Alloc;
+    sirius::AllocationRecord Alloc;
     sirius::BladeClient Client;
 
     bool writeRemote();
