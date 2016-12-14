@@ -19,7 +19,7 @@ public class TestRemoteBuf {
 
     int readLen = BM.get_read_alloc(a);
     byte buf_in[] = new byte[readLen];
-    BM.read(buf_in);
+//    BM.read(buf_in);
     System.out.println(Arrays.toString(buf_in));
 
     System.out.println("OK");

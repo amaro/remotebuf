@@ -22,13 +22,14 @@ class BufferManager {
     ~BufferManager();
 
     void write(const std::string id, char *buf, unsigned int s);
-    void read(char *buf);
+    void read(const std::string id, char *buf, unsigned int s);
     unsigned int get_read_alloc(const std::string id);
 
   private:
     sirius::BladeFileClient Client;
     sirius::FileAllocRec read_alloc;
     bool isConnected;
+    std::mutex BM;
 };
 
 }
