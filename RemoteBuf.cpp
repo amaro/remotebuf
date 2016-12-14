@@ -70,6 +70,18 @@ void BufferManager::read(const std::string id, char *buf, unsigned int s) {
     Client.read_sync(alloc1, 0, s, buf);
 }
 
+void BufferManager::read_offset(const std::string id, char *buf, unsigned int s, unsigned int offset) {
+    std::lock_guard<std::mutex> lock(BM);
+
+    if (!isConnected) {
+        Client.connect("10.10.49.98", "12345");
+        isConnected = true;
+    }
+
+    sirius::FileAllocRec alloc1 = Client.allocate(id, s);
+    Client.read_sync(alloc1, offset, s, buf);
+}
+
 unsigned int BufferManager::get_read_alloc(const std::string id) {
     std::lock_guard<std::mutex> lock(BM);
 

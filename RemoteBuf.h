@@ -24,6 +24,7 @@ class BufferManager {
     void write(const std::string id, char *buf, unsigned int s);
     void write_file(const std::string fname, const std::string id);
     void read(const std::string id, char *buf, unsigned int s);
+    void read_offset(const std::string id, char *buf, unsigned int s, unsigned int offset);
     unsigned int get_read_alloc(const std::string id);
 
   private:
