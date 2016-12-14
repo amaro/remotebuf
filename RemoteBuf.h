@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <mutex>
 #include <src/client/BladeClient.h>
+#include <src/client/RDMAClient.h>
 #include <src/common/AllocationRecord.h>
 #include "utils.h"
 

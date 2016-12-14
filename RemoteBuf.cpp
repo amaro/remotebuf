@@ -1,4 +1,3 @@
-#include "math.h"
 #include "RemoteBuf.h"
 
 using namespace RemoteBuf;
@@ -7,6 +6,7 @@ using namespace RemoteBuf;
 Buffer::Buffer()
   : WriteInProgress(false), BufferIsRemote(false), Size(0) {
   LocalBuf.reserve(INITIAL_BUFFER_SIZE);
+  Client.connect(RDMA_ADDR, RDMA_PORT);
 }
 
 Buffer::~Buffer() {}
@@ -66,6 +66,7 @@ void Buffer::read(char *buf) {
       throw std::runtime_error("Could not remote read");
 
   std::copy(LocalBuf.begin(), LocalBuf.end(), buf);
+  // TODO: clear LocalBuf, but need additional checks before doing this.
 }
 
 unsigned int Buffer::getSize() {
@@ -76,10 +77,14 @@ unsigned int Buffer::getSize() {
 }
 
 bool Buffer::writeRemote() {
-  // write to server
-  Client.connect(RDMA_ADDR, RDMA_PORT);
   Alloc = Client.allocate(Size);
-  Client.write_sync(Alloc, 0, Size, &LocalBuf[0]);
+
+  // wrap local buffer into RDMAMem
+  sirius::RDMAMem wrap(&LocalBuf[0], Size);
+
+  if (!Client.write_sync(Alloc, 0, Size, &LocalBuf[0], &wrap)) {
+    throw std::runtime_error("Error while doing write_sync");
+  }
 
   // clear local buffer
   LocalBuf.clear();
@@ -99,8 +104,13 @@ bool Buffer::readRemote() {
   // reserve local space
   LocalBuf.resize(Size);
 
+  // wrap local buffer into RDMAMem
+  sirius::RDMAMem wrap(&LocalBuf[0], Size);
+
   // read from server
-  Client.read_sync(Alloc, 0, Size, &LocalBuf[0]);
+  if (!Client.read_sync(Alloc, 0, Size, &LocalBuf[0], &wrap)) {
+    throw std::runtime_error("Error while doing read_sync");
+  }
 
   // management stuff
   BufferIsRemote = false;
