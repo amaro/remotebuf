@@ -47,6 +47,7 @@ void Buffer::write(char *buf, unsigned int size, unsigned int offset) {
 
 void Buffer::write(char *buf, unsigned int size, std::vector<char>::iterator start) {
   assert(Size == LocalBuf.size());
+  assert(BufferIsRemote == false); //Enforce write-once semantics
 
   LocalBuf.insert(start, buf, buf + size);
   Size = LocalBuf.size();
@@ -54,6 +55,7 @@ void Buffer::write(char *buf, unsigned int size, std::vector<char>::iterator sta
 
 void Buffer::flush() {
   assert(Size == LocalBuf.size());
+  assert(BufferIsRemote == false); //Enforce write-once semantics
 
 #ifdef DEBUG
   std::stringstream sstm;
@@ -70,6 +72,8 @@ void Buffer::flush() {
 }
 
 void Buffer::read(char *buf) {
+  //assert(Size == LocalBuf.size());
+
 #ifdef DEBUG
   std::stringstream sstm;
   sstm << "Buffer::read() on " << this;
@@ -88,6 +92,11 @@ void Buffer::read(char *buf) {
       throw std::runtime_error("Could not remote read");
 
   std::copy(LocalBuf.begin(), LocalBuf.end(), buf);
+
+#ifdef RDMA
+  LocalBuf.clear();
+  LocalBuf.shrink_to_fit();
+#endif
 }
 
 unsigned int Buffer::getSize() {
@@ -108,11 +117,11 @@ bool Buffer::writeRemote() {
 
   // clear local buffer
   LocalBuf.clear();
-  std::vector<char>(LocalBuf).swap(LocalBuf);
+  LocalBuf.shrink_to_fit();
 
   // management stuff
-  WriteInProgress = false;
   BufferIsRemote = true;
+  WriteInProgress = false;
 
   // done
   return true;
@@ -128,7 +137,6 @@ bool Buffer::readRemote() {
   Client.read_sync(Alloc, 0, Size, &LocalBuf[0]);
 
   // management stuff
-  BufferIsRemote = false;
   return true;
 }
 #else // for testing purposes only
@@ -154,7 +162,6 @@ bool Buffer::readRemote() {
 #endif
   std::this_thread::sleep_for(std::chrono::microseconds(waitTime));
 
-  BufferIsRemote = false;
   return true;
 }
 #endif
