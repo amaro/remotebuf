@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 
   std::cout << "read: " << buf2 << "\n";
 
-  if (memcmp("hellohello", buf2, B->getSize()) != 0) {
+  if (memcmp("hello", buf2, B->getSize()) != 0) {
     std::cout << "strings not equal\n";
     return 1;
   }

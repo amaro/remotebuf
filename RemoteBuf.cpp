@@ -10,7 +10,14 @@ Buffer::Buffer(const std::string &Serv, const std::string &Port)
   Client.connect(RdmaServ, RdmaPort);
 }
 
-Buffer::~Buffer() {}
+Buffer::~Buffer() {
+  // if read was never called, and the object is being destroyed
+  // before the write is done, wait for the write to be done,
+  // otherwise there will be transient errors.
+  if (WriteInProgress)
+    if (!WriteFuture.get())
+      assert("Cannot exit before write is done");
+}
 
 void Buffer::write(char *buf, unsigned int size) {
   std::stringstream sstm;
