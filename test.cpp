@@ -8,7 +8,7 @@
 using namespace RemoteBuf;
 
 int main(int argc, char *argv[]) {
-  BufferManager BM;
+  BufferManager BM("10.10.49.90", "12345");
   Buffer *B = BM.createBuffer("hi");
   assert(BM.bufferExists("hi"));
 

@@ -19,6 +19,7 @@ public class RemoteBuf extends ucb.remotebuf.config.RemoteBuf {
 // #include <stdexcept>
 // #include <mutex>
 // #include <src/client/BladeClient.h>
+// #include <src/client/RDMAClient.h>
 // #include <src/common/AllocationRecord.h>
 // #include "utils.h"
 
@@ -33,15 +34,11 @@ public class RemoteBuf extends ucb.remotebuf.config.RemoteBuf {
     static { Loader.load(); }
     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
     public Buffer(Pointer p) { super(p); }
-    /** Native array allocator. Access with {@link Pointer#position(long)}. */
-    public Buffer(long size) { super((Pointer)null); allocateArray(size); }
-    private native void allocateArray(long size);
-    @Override public Buffer position(long position) {
-        return (Buffer)super.position(position);
-    }
 
-    public Buffer() { super((Pointer)null); allocate(); }
-    private native void allocate();
+    public Buffer(@StdString BytePointer Serv, @StdString BytePointer Port) { super((Pointer)null); allocate(Serv, Port); }
+    private native void allocate(@StdString BytePointer Serv, @StdString BytePointer Port);
+    public Buffer(@StdString String Serv, @StdString String Port) { super((Pointer)null); allocate(Serv, Port); }
+    private native void allocate(@StdString String Serv, @StdString String Port);
 
     /* Writes buf with size s to LocalBuf */
     public native void write(@Cast("char*") BytePointer buf, @Cast("unsigned int") int s);
@@ -70,15 +67,11 @@ public class RemoteBuf extends ucb.remotebuf.config.RemoteBuf {
     static { Loader.load(); }
     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
     public BufferManager(Pointer p) { super(p); }
-    /** Native array allocator. Access with {@link Pointer#position(long)}. */
-    public BufferManager(long size) { super((Pointer)null); allocateArray(size); }
-    private native void allocateArray(long size);
-    @Override public BufferManager position(long position) {
-        return (BufferManager)super.position(position);
-    }
 
-    public BufferManager() { super((Pointer)null); allocate(); }
-    private native void allocate();
+    public BufferManager(@StdString BytePointer Serv, @StdString BytePointer Port) { super((Pointer)null); allocate(Serv, Port); }
+    private native void allocate(@StdString BytePointer Serv, @StdString BytePointer Port);
+    public BufferManager(@StdString String Serv, @StdString String Port) { super((Pointer)null); allocate(Serv, Port); }
+    private native void allocate(@StdString String Serv, @StdString String Port);
 
     /* Creates buffer with specified id.
      * Throws an exception if the buffer already exists

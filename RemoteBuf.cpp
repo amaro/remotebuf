@@ -3,10 +3,11 @@
 using namespace RemoteBuf;
 
 /* Buffer */
-Buffer::Buffer()
-  : WriteInProgress(false), BufferIsRemote(false), Size(0) {
+Buffer::Buffer(const std::string &Serv, const std::string &Port)
+  : WriteInProgress(false), BufferIsRemote(false), Size(0), RdmaServ(Serv),
+  RdmaPort(Port) {
   LocalBuf.reserve(INITIAL_BUFFER_SIZE);
-  Client.connect(RDMA_ADDR, RDMA_PORT);
+  Client.connect(RdmaServ, RdmaPort);
 }
 
 Buffer::~Buffer() {}
@@ -117,7 +118,8 @@ bool Buffer::readRemote() {
 }
 
 /* BufferManager */
-BufferManager::BufferManager() {
+BufferManager::BufferManager(std::string Serv, std::string Port)
+  : RdmaServ(Serv), RdmaPort(Port) {
 	debug("BufferManager::BufferManager()");
 }
 
@@ -132,7 +134,7 @@ Buffer *BufferManager::createBuffer(const std::string id) {
   if (bufferExists(id))
     throw std::runtime_error("Buffer already exists");
 
-  Buffer *B = new Buffer();
+  Buffer *B = new Buffer(RdmaServ, RdmaPort);
   Buffers.insert({id, B});
 
   std::stringstream sstm;

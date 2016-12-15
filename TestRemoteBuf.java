@@ -5,7 +5,7 @@ import ucb.remotebuf.*;
 
 public class TestRemoteBuf {
   public static void main(String[] args) {
-    RemoteBuf.BufferManager BM = new RemoteBuf.BufferManager();
+    RemoteBuf.BufferManager BM = new RemoteBuf.BufferManager(args[0], args[1]);
 
     {
       RemoteBuf.Buffer B = BM.createBuffer("buf1");

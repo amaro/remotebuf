@@ -19,7 +19,7 @@ const char RDMA_ADDR[] = "10.10.49.94";
 /* Buffer is not reentrant */
 class Buffer {
   public:
-    Buffer();
+    Buffer(const std::string &Serv, const std::string &Port);
     ~Buffer();
 
     /* Writes buf with size s to LocalBuf */
@@ -42,6 +42,8 @@ class Buffer {
     bool BufferIsRemote;
     unsigned int Size;
     std::future<bool> WriteFuture;
+    std::string RdmaServ;
+    std::string RdmaPort;
 
     sirius::AllocationRecord Alloc;
     sirius::BladeClient Client;
@@ -54,7 +56,7 @@ class Buffer {
 /* BufferManager not reentrant */
 class BufferManager {
   public:
-    BufferManager();
+    BufferManager(std::string Serv, std::string Port);
     ~BufferManager();
 
     /* Creates buffer with specified id.
@@ -77,5 +79,7 @@ class BufferManager {
   private:
     std::unordered_map<std::string, Buffer *> Buffers;
     std::mutex BM;
+    std::string RdmaServ;
+    std::string RdmaPort;
 };
 }
