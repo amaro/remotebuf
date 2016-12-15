@@ -66,7 +66,8 @@ void Buffer::read(char *buf) {
       throw std::runtime_error("Could not remote read");
 
   std::copy(LocalBuf.begin(), LocalBuf.end(), buf);
-  // TODO: clear LocalBuf, but need additional checks before doing this.
+  LocalBuf.clear();
+  std::vector<char>(LocalBuf).swap(LocalBuf);
 }
 
 unsigned int Buffer::getSize() {
@@ -112,8 +113,6 @@ bool Buffer::readRemote() {
     throw std::runtime_error("Error while doing read_sync");
   }
 
-  // management stuff
-  BufferIsRemote = false;
   return true;
 }
 
