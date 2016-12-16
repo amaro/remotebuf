@@ -11,10 +11,6 @@
 
 namespace RemoteBuf {
 
-const int INITIAL_BUFFER_SIZE = 16384;
-const char RDMA_PORT[] = "12345";
-const char RDMA_ADDR[] = "10.10.49.94";
-
 /* BufferManager not reentrant */
 class BufferManager {
   public:
@@ -29,7 +25,6 @@ class BufferManager {
 
   private:
     sirius::BladeFileClient Client;
-    sirius::FileAllocRec read_alloc;
     bool isConnected;
     std::mutex BM;
 };

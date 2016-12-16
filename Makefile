@@ -57,7 +57,7 @@ $(PKGPATH)/config/RemoteBuf.class: $(PKGPATH)/config/RemoteBuf.java
 	javac -cp $(JAVACPPJAR) $<
 
 clean:
-	rm -rf *.o *.so *.class *.jar $(PKGPATH)/*.h $(PKGPATH)/*.class $(PKGPATH)/config/*.class $(PKGPATH)/linux-x86_64 test
+	rm -rf *.o *.so *.class *.jar $(PKGPATH)/*.h $(PKGPATH)/*.class $(PKGPATH)/config/*.class $(PKGPATH)/linux-x86_64 test ucb/remotebuf/RemoteBuf.java
 
 
 runtest:
