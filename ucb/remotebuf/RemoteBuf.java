@@ -40,12 +40,12 @@ public class RemoteBuf extends ucb.remotebuf.config.RemoteBuf {
     public Buffer(@StdString String Serv, @StdString String Port) { super((Pointer)null); allocate(Serv, Port); }
     private native void allocate(@StdString String Serv, @StdString String Port);
 
-    /* Writes buf with size s to LocalBuf */
+    /* Writes buf with size s to WriteBuf */
     public native void write(@Cast("char*") BytePointer buf, @Cast("unsigned int") int s);
     public native void write(@Cast("char*") ByteBuffer buf, @Cast("unsigned int") int s);
     public native void write(@Cast("char*") byte[] buf, @Cast("unsigned int") int s);
 
-    /* Writes buf with size s to LocalBuf at specified offset */
+    /* Writes buf with size s to WriteBuf at specified offset */
     public native void write(@Cast("char*") BytePointer buf, @Cast("unsigned int") int s, @Cast("unsigned int") int off);
     public native void write(@Cast("char*") ByteBuffer buf, @Cast("unsigned int") int s, @Cast("unsigned int") int off);
     public native void write(@Cast("char*") byte[] buf, @Cast("unsigned int") int s, @Cast("unsigned int") int off);
@@ -53,7 +53,7 @@ public class RemoteBuf extends ucb.remotebuf.config.RemoteBuf {
     /* Flush pending requests (write) */
     public native void flush();
 
-    /* Copy LocalBuf to buf */
+    /* Read remote data into buf */
     public native void read(@Cast("char*") BytePointer buf);
     public native void read(@Cast("char*") ByteBuffer buf);
     public native void read(@Cast("char*") byte[] buf);

@@ -22,22 +22,22 @@ class Buffer {
     Buffer(const std::string &Serv, const std::string &Port);
     ~Buffer();
 
-    /* Writes buf with size s to LocalBuf */
+    /* Writes buf with size s to WriteBuf */
     void write(char *buf, unsigned int s);
 
-    /* Writes buf with size s to LocalBuf at specified offset */
+    /* Writes buf with size s to WriteBuf at specified offset */
     void write(char *buf, unsigned int s, unsigned int off);
 
     /* Flush pending requests (write) */
     void flush();
 
-    /* Copy LocalBuf to buf */
+    /* Read remote data into buf */
     void read(char *buf);
 
     /* Get the size of the buffer, regardless of where it is located. */
     unsigned int getSize();
   private:
-    std::vector<char> LocalBuf;
+    std::vector<char> WriteBuf;
     bool WriteInProgress;
     bool BufferIsRemote;
     unsigned int Size;
@@ -49,7 +49,7 @@ class Buffer {
     sirius::BladeClient Client;
 
     bool writeRemote();
-    bool readRemote();
+    bool readRemote(char *buf);
     void write(char *buf, unsigned int s, std::vector<char>::iterator start);
 };
 

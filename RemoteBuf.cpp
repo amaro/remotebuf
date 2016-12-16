@@ -6,7 +6,7 @@ using namespace RemoteBuf;
 Buffer::Buffer(const std::string &Serv, const std::string &Port)
   : WriteInProgress(false), BufferIsRemote(false), Size(0), RdmaServ(Serv),
   RdmaPort(Port) {
-  LocalBuf.reserve(INITIAL_BUFFER_SIZE);
+  WriteBuf.reserve(INITIAL_BUFFER_SIZE);
   Client.connect(RdmaServ, RdmaPort);
 }
 
@@ -24,7 +24,7 @@ void Buffer::write(char *buf, unsigned int size) {
   sstm << "Buffer::write(buf, size) on " << this;
   debug(sstm);
 
-  write(buf, size, LocalBuf.end());
+  write(buf, size, WriteBuf.end());
 }
 
 void Buffer::write(char *buf, unsigned int size, unsigned int offset) {
@@ -32,18 +32,18 @@ void Buffer::write(char *buf, unsigned int size, unsigned int offset) {
   sstm << "Buffer::write(buf," << size << "," << offset << ") on " << this;
   debug(sstm);
 
-  write(buf, size, LocalBuf.begin() + offset);
+  write(buf, size, WriteBuf.begin() + offset);
 }
 
 void Buffer::write(char *buf, unsigned int size, std::vector<char>::iterator start) {
-  assert(Size == LocalBuf.size());
+  assert(Size == WriteBuf.size());
 
-  LocalBuf.insert(start, buf, buf + size);
-  Size = LocalBuf.size();
+  WriteBuf.insert(start, buf, buf + size);
+  Size = WriteBuf.size();
 }
 
 void Buffer::flush() {
-  assert(Size == LocalBuf.size());
+  assert(Size == WriteBuf.size());
 
   std::stringstream sstm;
   sstm << "Buffer::flush() on " << this;
@@ -70,12 +70,8 @@ void Buffer::read(char *buf) {
   // check if the buffer was pushed to remote
   if (BufferIsRemote)
     // if it was, synchronously read
-    if (!readRemote())
+    if (!readRemote(buf))
       throw std::runtime_error("Could not remote read");
-
-  std::copy(LocalBuf.begin(), LocalBuf.end(), buf);
-  LocalBuf.clear();
-  std::vector<char>(LocalBuf).swap(LocalBuf);
 }
 
 unsigned int Buffer::getSize() {
@@ -89,15 +85,15 @@ bool Buffer::writeRemote() {
   Alloc = Client.allocate(Size);
 
   // wrap local buffer into RDMAMem
-  sirius::RDMAMem wrap(&LocalBuf[0], Size);
+  sirius::RDMAMem wrap(&WriteBuf[0], Size);
 
-  if (!Client.write_sync(Alloc, 0, Size, &LocalBuf[0], &wrap)) {
+  if (!Client.write_sync(Alloc, 0, Size, &WriteBuf[0], &wrap)) {
     throw std::runtime_error("Error while doing write_sync");
   }
 
   // clear local buffer
-  LocalBuf.clear();
-  std::vector<char>(LocalBuf).swap(LocalBuf);
+  WriteBuf.clear();
+  std::vector<char>(WriteBuf).swap(WriteBuf);
 
   // management stuff
   WriteInProgress = false;
@@ -107,17 +103,14 @@ bool Buffer::writeRemote() {
   return true;
 }
 
-bool Buffer::readRemote() {
+bool Buffer::readRemote(char *buf) {
   assert(BufferIsRemote);
 
-  // reserve local space
-  LocalBuf.resize(Size);
-
   // wrap local buffer into RDMAMem
-  sirius::RDMAMem wrap(&LocalBuf[0], Size);
+  sirius::RDMAMem wrap(buf, Size);
 
   // read from server
-  if (!Client.read_sync(Alloc, 0, Size, &LocalBuf[0], &wrap)) {
+  if (!Client.read_sync(Alloc, 0, Size, buf, &wrap)) {
     throw std::runtime_error("Error while doing read_sync");
   }
 
