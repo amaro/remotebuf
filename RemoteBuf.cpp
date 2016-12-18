@@ -48,11 +48,7 @@ void BufferManager::write_file(const std::string fname, const std::string id) {
     fstat(fd, &sb);
     memblock = (char*)mmap(NULL, sb.st_size, PROT_READ, MAP_SHARED, fd, 0);
 
-//    sirius::RDMAMem wrap(&memblock[0], sb.st_size);
-
-
     sirius::FileAllocRec alloc1 = Client.allocate(id, sb.st_size);
-//    Client.write_sync(alloc1, 0, sb.st_size, memblock, &wrap);
     Client.write_sync(alloc1, 0, sb.st_size, memblock);
 
     munmap(memblock, sb.st_size);
@@ -80,7 +76,7 @@ void BufferManager::read_offset(const std::string id, char *buf, unsigned int s,
     Client.read_sync(alloc1, offset, s, buf);
 }
 
-unsigned int BufferManager::get_read_alloc(const std::string id) {
+/*unsigned int BufferManager::get_read_alloc(const std::string id) {
     std::lock_guard<std::mutex> lock(BM);
 
     if (!isConnected) {
@@ -89,4 +85,4 @@ unsigned int BufferManager::get_read_alloc(const std::string id) {
     }
     sirius::FileAllocRec alloc1 = Client.allocate(id, 0); // does the size matter here?
     return alloc1->size;
-}
+}*/

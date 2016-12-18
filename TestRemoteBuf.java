@@ -16,12 +16,12 @@ public class TestRemoteBuf {
     System.out.println("original input:"); 
     System.out.println(Arrays.toString(buf));
     BM.write(a, buf, s);
-
+/*
     int readLen = BM.get_read_alloc(a);
     byte buf_in[] = new byte[readLen];
 //    BM.read(buf_in);
     System.out.println(Arrays.toString(buf_in));
-
+*/
     System.out.println("OK");
   }
 }
