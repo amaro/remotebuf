@@ -14,7 +14,7 @@ namespace RemoteBuf {
 /* BufferManager not reentrant */
 class BufferManager {
   public:
-    BufferManager();
+    BufferManager(int ipselect);
     ~BufferManager();
 
     void write(const std::string id, char *buf, unsigned int s);
@@ -27,6 +27,7 @@ class BufferManager {
     sirius::BladeFileClient Client;
     bool isConnected;
     std::mutex BM;
+    const char* myip;
 };
 
 }

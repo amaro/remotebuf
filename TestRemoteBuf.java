@@ -6,7 +6,7 @@ import ucb.remotebuf.*;
 
 public class TestRemoteBuf {
   public static void main(String[] args) {
-    RemoteBuf.BufferManager BM = new RemoteBuf.BufferManager();
+/*    RemoteBuf.BufferManager BM = new RemoteBuf.BufferManager();
 
     String a = "lol";
     String dat = "asdf";
@@ -15,7 +15,7 @@ public class TestRemoteBuf {
       
     System.out.println("original input:"); 
     System.out.println(Arrays.toString(buf));
-    BM.write(a, buf, s);
+    BM.write(a, buf, s);*/
 /*
     int readLen = BM.get_read_alloc(a);
     byte buf_in[] = new byte[readLen];

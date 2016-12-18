@@ -4,17 +4,19 @@
 #include <sys/types.h>
 #include <fcntl.h>
 
-#define IP ("10.10.49.85")
+#define IP1 ("10.10.49.88")
+#define IP2 ("10.10.49.85")
 
 using namespace RemoteBuf;
 
 /* BufferManager */
-BufferManager::BufferManager() {
+BufferManager::BufferManager(int ipselect) {
     printf("THIS IS BUFFER MANAGER FROM 12-15-16:5:03pm\n");
 #ifdef DEBUG
 	debug("BufferManager::BufferManager()");
 #endif
     isConnected = false;
+    myip = ipselect == 2 ? IP2 : IP1;
 }
 
 BufferManager::~BufferManager() {
@@ -27,7 +29,7 @@ void BufferManager::write(const std::string id, char *buf, unsigned int s) {
     std::lock_guard<std::mutex> lock(BM);
 
     if (!isConnected) {
-        Client.connect(IP, "12345");
+        Client.connect(myip, "12345");
         isConnected = true;
     }
     sirius::FileAllocRec alloc1 = Client.allocate(id, s);
@@ -38,7 +40,7 @@ void BufferManager::write_file(const std::string fname, const std::string id) {
     std::lock_guard<std::mutex> lock(BM);
 
     if (!isConnected) {
-        Client.connect(IP, "12345");
+        Client.connect(myip, "12345");
         isConnected = true;
     }
     char * memblock;
@@ -58,7 +60,7 @@ void BufferManager::read(const std::string id, char *buf, unsigned int s) {
     std::lock_guard<std::mutex> lock(BM);
 
     if (!isConnected) {
-        Client.connect(IP, "12345");
+        Client.connect(myip, "12345");
         isConnected = true;
     }
     sirius::FileAllocRec alloc1 = Client.allocate(id, s);
@@ -69,7 +71,7 @@ void BufferManager::read_offset(const std::string id, char *buf, unsigned int s,
     std::lock_guard<std::mutex> lock(BM);
 
     if (!isConnected) {
-        Client.connect(IP, "12345");
+        Client.connect(myip, "12345");
         isConnected = true;
     }
     sirius::FileAllocRec alloc1 = Client.allocate(id, s);
@@ -80,7 +82,7 @@ void BufferManager::read_offset(const std::string id, char *buf, unsigned int s,
     std::lock_guard<std::mutex> lock(BM);
 
     if (!isConnected) {
-        Client.connect(IP, "12345");
+        Client.connect(myip, "12345");
         isConnected = true;
     }
     sirius::FileAllocRec alloc1 = Client.allocate(id, 0); // does the size matter here?
