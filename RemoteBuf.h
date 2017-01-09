@@ -45,6 +45,9 @@ class Buffer {
     std::string RdmaServ;
     std::string RdmaPort;
 
+    /* String to identify this node in the logs */
+    std::ofstream logOut;
+
     sirius::AllocationRecord Alloc;
     sirius::BladeClient Client;
 
@@ -76,10 +79,14 @@ class BufferManager {
 
     /* Returns true if the buffer with specified id exists. */
     bool bufferExists(const std::string id);
+
+    std::string reportStats();
+
   private:
     std::unordered_map<std::string, Buffer *> Buffers;
     std::mutex BM;
     std::string RdmaServ;
     std::string RdmaPort;
+    std::string ReportString;
 };
 }

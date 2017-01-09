@@ -94,6 +94,9 @@ public class RemoteBuf extends ucb.remotebuf.config.RemoteBuf {
     /* Returns true if the buffer with specified id exists. */
     public native @Cast("bool") boolean bufferExists(@StdString BytePointer id);
     public native @Cast("bool") boolean bufferExists(@StdString String id);
+
+    // public native @StdString BytePointer reportStats();
+    public native @StdString String reportStats();
 }
 
 

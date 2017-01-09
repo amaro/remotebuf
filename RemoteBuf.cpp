@@ -1,11 +1,47 @@
 #include "RemoteBuf.h"
+#include <unistd.h>
+#include <limits.h>
 
 using namespace RemoteBuf;
+
+/* Global Performance Counters */
+typedef std::chrono::high_resolution_clock::time_point timeStamp_t;
+static inline timeStamp_t getTimeStamp() {
+  return std::chrono::high_resolution_clock::now();
+}
+
+static inline int64_t getElapsedTime(timeStamp_t start, timeStamp_t end) {
+  return (end - start).count();
+}
+
+// timeStamp_t stat_remoteWriteTime; #<{(| Time spent writing in ns |)}>#
+// timeStamp_t stat_remoteReadTime;  #<{(| Time spent Reading in ns |)}>#
+/* Time spent reading/writing over RDMA (note: write times are async) */
+int64_t stat_remoteWriteTime = 0;
+int64_t stat_remoteReadTime = 0;
+
+/* Time waiting for a write to finish (may happen during read) */ 
+int64_t stat_waitOnWrite = 0; 
+
+int64_t stat_bytesWritten = 0;
+int64_t stat_bytesRead = 0;
 
 /* Buffer */
 Buffer::Buffer(const std::string &Serv, const std::string &Port)
   : WriteInProgress(false), BufferIsRemote(false), Size(0), RdmaServ(Serv),
   RdmaPort(Port) {
+
+  /* setup logging */
+  char logPrefix[HOST_NAME_MAX];
+  int res = gethostname(logPrefix, HOST_NAME_MAX);
+  assert(res == 0);
+
+  std::string logPath = "~/spark_results/";
+  // std::string logPath = "~/";
+  logPath.append(logPrefix);
+  logOut.open(logPath.c_str());
+  logOut << "Opened RmemLog";
+
   WriteBuf.reserve(INITIAL_BUFFER_SIZE);
   Client.connect(RdmaServ, RdmaPort);
 }
@@ -38,8 +74,10 @@ void Buffer::write(char *buf, unsigned int size, unsigned int offset) {
 void Buffer::write(char *buf, unsigned int size, std::vector<char>::iterator start) {
   assert(Size == WriteBuf.size());
 
+  
   WriteBuf.insert(start, buf, buf + size);
   Size = WriteBuf.size();
+  
 }
 
 void Buffer::flush() {
@@ -63,9 +101,12 @@ void Buffer::read(char *buf) {
   debug(sstm);
 
   // if a write is in progress, wait for it to finish
-  if (WriteInProgress)
+  if (WriteInProgress) {
+    timeStamp_t start = getTimeStamp();
     if (!WriteFuture.get())
       throw std::runtime_error("There was an error writting to remote");
+    stat_waitOnWrite += getElapsedTime(start, getTimeStamp());
+  }
 
   // check if the buffer was pushed to remote
   if (BufferIsRemote)
@@ -82,6 +123,8 @@ unsigned int Buffer::getSize() {
 }
 
 bool Buffer::writeRemote() {
+  timeStamp_t start = getTimeStamp();
+
   Alloc = Client.allocate(Size);
 
   // wrap local buffer into RDMAMem
@@ -99,12 +142,16 @@ bool Buffer::writeRemote() {
   WriteInProgress = false;
   BufferIsRemote = true;
 
+  stat_remoteWriteTime += getElapsedTime(start, getTimeStamp());
+
   // done
   return true;
 }
 
 bool Buffer::readRemote(char *buf) {
   assert(BufferIsRemote);
+
+  timeStamp_t start = getTimeStamp();
 
   // wrap local buffer into RDMAMem
   sirius::RDMAMem wrap(buf, Size);
@@ -113,6 +160,8 @@ bool Buffer::readRemote(char *buf) {
   if (!Client.read_sync(Alloc, 0, Size, buf, &wrap)) {
     throw std::runtime_error("Error while doing read_sync");
   }
+
+  stat_remoteReadTime += getElapsedTime(start, getTimeStamp());
 
   return true;
 }
@@ -124,6 +173,7 @@ BufferManager::BufferManager(std::string Serv, std::string Port)
 }
 
 BufferManager::~BufferManager() {
+  std::cout << "BufferManager Destructor\n";
   for (auto B: Buffers)
     delete B.second;
 }
@@ -173,4 +223,15 @@ bool BufferManager::bufferExists(const std::string id) {
 	sstm << "BufferManager::bufferExists(" + id + ") = " << Buffers.count(id);
   debug(sstm);
   return Buffers.count(id) == 1;
+}
+
+/* Divide nanos by this to get Millis */
+#define convToMillis ((double)1E6)
+std::string BufferManager::reportStats() {
+  ReportString.clear();
+  ReportString += "rbuf_remoteWriteTime: " + std::to_string(stat_remoteWriteTime / convToMillis) + "\n";
+  ReportString += "rbuf_remoteReadTime: " + std::to_string(stat_remoteReadTime / convToMillis) + "\n";
+  ReportString += "rbuf_waitOnWrite: " + std::to_string(stat_waitOnWrite / convToMillis) + "\n";
+  // std::cout << "Internal BM Stat Report: \n" + ReportString;
+  return ReportString;
 }
