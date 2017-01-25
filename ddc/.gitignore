@@ -1,0 +1,12 @@
+*.o
+*.log
+*.status
+*.in
+*.a
+Makefile
+configure
+*.scan
+core
+.deps
+*.out
+*.txt
